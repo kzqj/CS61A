@@ -187,21 +187,17 @@ class ThrowerAnt(Ant):
         #     cur_place = cur_place.entrance
         # return None
 
+        # Problem 4
         assert self.lower_bound <= self.upper_bound
-
         cur_place = self.place
-        for i in range(int(self.lower_bound)):
-            if cur_place is None:
-                return None
-            cur_place = cur_place.entrance
+        cur_idx = 0.0
 
-        cur_idx = self.lower_bound
         while (
             cur_place is not None
             and not cur_place.is_hive
             and cur_idx <= self.upper_bound
         ):
-            if len(cur_place.bees) > 0:
+            if cur_idx >= self.lower_bound and len(cur_place.bees) > 0:
                 return random_bee(cur_place.bees)
             cur_place = cur_place.entrance
             cur_idx += 1
