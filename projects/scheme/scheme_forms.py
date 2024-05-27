@@ -12,6 +12,7 @@ from scheme_builtins import *
 # initial identifying symbol (if, lambda, quote, ...). Its second argument is
 # the environment in which the form is to be evaluated.
 
+
 def do_define_form(expressions, env):
     """Evaluate a define form.
     >>> env = create_global_frame()
@@ -30,14 +31,17 @@ def do_define_form(expressions, env):
     >>> scheme_eval(read_line("(f 3)"), env)
     5
     """
-    validate_form(expressions, 2) # Checks that expressions is a list of length at least 2
+    validate_form(
+        expressions, 2
+    )  # Checks that expressions is a list of length at least 2
     signature = expressions.first
     if scheme_symbolp(signature):
         # assigning a name to a value e.g. (define x (+ 1 2))
-        validate_form(expressions, 2, 2) # Checks that expressions is a list of length exactly 2
+        validate_form(
+            expressions, 2, 2
+        )  # Checks that expressions is a list of length exactly 2
         # BEGIN PROBLEM 4
         "*** YOUR CODE HERE ***"
-        print(f"DEBUG: {repr(expressions)}")
         env.define(signature, scheme_eval(expressions.rest.first, env))
         return signature
         # END PROBLEM 4
@@ -45,10 +49,16 @@ def do_define_form(expressions, env):
         # defining a named procedure e.g. (define (f x y) (+ x y))
         # BEGIN PROBLEM 10
         "*** YOUR CODE HERE ***"
+        func_name = signature.first
+        env.define(
+            func_name, do_lambda_form(Pair(signature.rest, expressions.rest), env)
+        )
+        return func_name
         # END PROBLEM 10
     else:
         bad_signature = signature.first if isinstance(signature, Pair) else signature
         raise SchemeError('non-symbol: {0}'.format(bad_signature))
+
 
 def do_quote_form(expressions, env):
     """Evaluate a quote form.
@@ -63,6 +73,7 @@ def do_quote_form(expressions, env):
     return expressions.first
     # END PROBLEM 5
 
+
 def do_begin_form(expressions, env):
     """Evaluate a begin form.
 
@@ -74,6 +85,7 @@ def do_begin_form(expressions, env):
     """
     validate_form(expressions, 1)
     return eval_all(expressions, env)
+
 
 def do_lambda_form(expressions, env):
     """Evaluate a lambda form.
@@ -87,7 +99,9 @@ def do_lambda_form(expressions, env):
     validate_formals(formals)
     # BEGIN PROBLEM 7
     "*** YOUR CODE HERE ***"
+    return LambdaProcedure(formals, expressions.rest, env)
     # END PROBLEM 7
+
 
 def do_if_form(expressions, env):
     """Evaluate an if form.
@@ -103,6 +117,7 @@ def do_if_form(expressions, env):
         return scheme_eval(expressions.rest.first, env)
     elif len(expressions) == 3:
         return scheme_eval(expressions.rest.rest.first, env)
+
 
 def do_and_form(expressions, env):
     """Evaluate a (short-circuited) and form.
@@ -122,6 +137,7 @@ def do_and_form(expressions, env):
     "*** YOUR CODE HERE ***"
     # END PROBLEM 12
 
+
 def do_or_form(expressions, env):
     """Evaluate a (short-circuited) or form.
 
@@ -139,6 +155,7 @@ def do_or_form(expressions, env):
     # BEGIN PROBLEM 12
     "*** YOUR CODE HERE ***"
     # END PROBLEM 12
+
 
 def do_cond_form(expressions, env):
     """Evaluate a cond form.
@@ -161,6 +178,7 @@ def do_cond_form(expressions, env):
             # END PROBLEM 13
         expressions = expressions.rest
 
+
 def do_let_form(expressions, env):
     """Evaluate a let form.
 
@@ -171,6 +189,7 @@ def do_let_form(expressions, env):
     validate_form(expressions, 2)
     let_env = make_let_frame(expressions.first, env)
     return eval_all(expressions.rest, let_env)
+
 
 def make_let_frame(bindings, env):
     """Create a child frame of Frame ENV that contains the definitions given in
@@ -186,10 +205,10 @@ def make_let_frame(bindings, env):
     return env.make_child_frame(names, vals)
 
 
-
 def do_quasiquote_form(expressions, env):
     """Evaluate a quasiquote form with parameters EXPRESSIONS in
     Frame ENV."""
+
     def quasiquote_item(val, env, level):
         """Evaluate Scheme expression VAL that is nested at depth LEVEL in
         a quasiquote form in Frame ENV."""
@@ -209,6 +228,7 @@ def do_quasiquote_form(expressions, env):
     validate_form(expressions, 1, 1)
     return quasiquote_item(expressions.first, env, 1)
 
+
 def do_unquote(expressions, env):
     raise SchemeError('unquote outside of quasiquote')
 
@@ -217,6 +237,7 @@ def do_unquote(expressions, env):
 # Dynamic Scope #
 #################
 
+
 def do_mu_form(expressions, env):
     """Evaluate a mu form."""
     validate_form(expressions, 2)
@@ -224,8 +245,8 @@ def do_mu_form(expressions, env):
     validate_formals(formals)
     # BEGIN PROBLEM 11
     "*** YOUR CODE HERE ***"
+    return MuProcedure(formals, expressions.rest)
     # END PROBLEM 11
-
 
 
 SPECIAL_FORMS = {

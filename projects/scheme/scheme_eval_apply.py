@@ -36,9 +36,9 @@ def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
     else:
         # BEGIN PROBLEM 3
         "*** YOUR CODE HERE ***"
-        operator= scheme_eval(first, env) # type: ignore
+        operator = scheme_eval(first, env)  # type: ignore
         validate_procedure(operator)
-        operands= rest.map(partial(scheme_eval, env=env))
+        operands = rest.map(partial(scheme_eval, env=env))
         return scheme_apply(operator, operands, env)
         # END PROBLEM 3
 
@@ -69,10 +69,14 @@ def scheme_apply(procedure, args, env):
     elif isinstance(procedure, LambdaProcedure):
         # BEGIN PROBLEM 9
         "*** YOUR CODE HERE ***"
+        child_frame: Frame = procedure.env.make_child_frame(procedure.formals, args)
+        return eval_all(procedure.body, child_frame)
         # END PROBLEM 9
     elif isinstance(procedure, MuProcedure):
         # BEGIN PROBLEM 11
         "*** YOUR CODE HERE ***"
+        child_frame: Frame = env.make_child_frame(procedure.formals, args)
+        return eval_all(procedure.body, child_frame)
         # END PROBLEM 11
     else:
         assert False, "Unexpected procedure: {}".format(procedure)
@@ -94,9 +98,17 @@ def eval_all(expressions, env):
     2
     """
     # BEGIN PROBLEM 6
-    return scheme_eval(
-        expressions.first, env
-    )  # replace this with lines of your own code
+    # return scheme_eval(
+    #     expressions.first, env
+    # )  # replace this with lines of your own code
+    if expressions is nil:
+        return None
+    cur_exp = expressions.first
+    while expressions.rest is not nil:
+        scheme_eval(cur_exp, env)
+        expressions = expressions.rest
+        cur_exp = expressions.first
+    return scheme_eval(expressions.first, env)
     # END PROBLEM 6
 
 

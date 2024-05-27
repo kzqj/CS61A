@@ -2,12 +2,15 @@ import builtins
 
 from pair import *
 
+
 class SchemeError(Exception):
     """Exception indicating an error in a Scheme program."""
+
 
 ################
 # Environments #
 ################
+
 
 class Frame:
     """An environment frame binds Scheme symbols to Scheme values."""
@@ -42,8 +45,7 @@ class Frame:
         # END PROBLEM 1
         raise SchemeError('unknown identifier: {0}'.format(symbol))
 
-
-    def make_child_frame(self, formals, vals):
+    def make_child_frame(self, formals, vals): # type: ignore
         """Return a new local frame whose parent is SELF, in which the symbols
         in a Scheme list of formal parameters FORMALS are bound to the Scheme
         values in the Scheme list VALS. Both FORMALS and VALS are represented
@@ -58,14 +60,23 @@ class Frame:
             raise SchemeError('Incorrect number of arguments to function call')
         # BEGIN PROBLEM 8
         "*** YOUR CODE HERE ***"
+        child_frame: Frame = Frame(self)
+        while formals is not nil:
+            child_frame.define(formals.first, vals.first)
+            formals: Pair = formals.rest
+            vals: Pair = vals.rest
+        return child_frame
         # END PROBLEM 8
+
 
 ##############
 # Procedures #
 ##############
 
+
 class Procedure:
     """The the base class for all Procedure classes."""
+
 
 class BuiltinProcedure(Procedure):
     """A Scheme procedure defined as a Python function."""
@@ -78,6 +89,7 @@ class BuiltinProcedure(Procedure):
     def __str__(self):
         return '#[{0}]'.format(self.name)
 
+
 class LambdaProcedure(Procedure):
     """A procedure defined by a lambda expression or a define form."""
 
@@ -88,6 +100,7 @@ class LambdaProcedure(Procedure):
         assert isinstance(env, Frame), "env must be of type Frame"
 
         from scheme_utils import validate_type, scheme_listp
+
         validate_type(formals, scheme_listp, 0, 'LambdaProcedure')
         validate_type(body, scheme_listp, 1, 'LambdaProcedure')
         self.formals = formals
@@ -99,7 +112,9 @@ class LambdaProcedure(Procedure):
 
     def __repr__(self):
         return 'LambdaProcedure({0}, {1}, {2})'.format(
-            repr(self.formals), repr(self.body), repr(self.env))
+            repr(self.formals), repr(self.body), repr(self.env)
+        )
+
 
 class MuProcedure(Procedure):
     """A procedure defined by a mu expression, which has dynamic scope.
@@ -123,5 +138,4 @@ class MuProcedure(Procedure):
         return str(Pair('mu', Pair(self.formals, self.body)))
 
     def __repr__(self):
-        return 'MuProcedure({0}, {1})'.format(
-            repr(self.formals), repr(self.body))
+        return 'MuProcedure({0}, {1})'.format(repr(self.formals), repr(self.body))
