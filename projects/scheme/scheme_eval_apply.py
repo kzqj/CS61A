@@ -5,6 +5,7 @@ from scheme_utils import *
 from ucb import main, trace
 
 import scheme_forms
+from functools import partial
 
 ##############
 # Eval/Apply #
@@ -35,6 +36,10 @@ def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
     else:
         # BEGIN PROBLEM 3
         "*** YOUR CODE HERE ***"
+        operator= scheme_eval(first, env) # type: ignore
+        validate_procedure(operator)
+        operands= rest.map(partial(scheme_eval, env=env))
+        return scheme_apply(operator, operands, env)
         # END PROBLEM 3
 
 
