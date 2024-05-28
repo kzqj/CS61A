@@ -7,3 +7,7 @@
 [教材翻译版](https://composingprograms.netlify.app/)
 
 [MartinLwx's blog答案](https://martinlwx.github.io/zh-cn/categories/)
+
+[尾递归优化参考](https://zonepg.github.io/posts/programming/pl/2022-03-01-tail-recursion-optimization/)
+
+[let-to-lambda参考](https://cloud.tencent.com/developer/article/2115557)
